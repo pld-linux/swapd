@@ -1,3 +1,5 @@
+# TODO
+# update to 0.4 from http://www.rkeene.org/oss/swapd/
 Summary:	Dynamic swapping manager for Linux
 Summary(pl):	Program zarz±dzaj±cy dynamicznym swapowaniem dla Linuksa
 Name:		swapd
