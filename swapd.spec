@@ -1,19 +1,20 @@
-# TODO: init script
 Summary:	Dynamic swapping manager for Linux
 Summary(pl):	Program zarz±dzaj±cy dynamicznym swapowaniem dla Linuksa
 Name:		swapd
 Version:	0.2
-Release:	2
+Release:	4
 License:	GPL v2+
 Group:		Daemons
 Source0:	ftp://ftp.linux.hr/pub/swapd/%{name}-%{version}.tar.gz
 # Source0-md5:	5ae232ee69130426b595ba90c81eca4e
+Source1:	%{name}.init
 URL:		http://cvs.linux.hr/swapd/
 Patch0:		%{name}-gcc33.patch
 Patch1:		%{name}-confdir.patch
 BuildRequires:	autoconf
-#PreReq:		rc-scripts
-#Requires(post,preun):	/sbin/chkconfig
+PreReq:		rc-scripts
+Requires:	/bin/awk
+Requires(post,preun):	/sbin/chkconfig
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -47,12 +48,12 @@ wirtualnej.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_sbindir},%{_mandir}/man8,%{_sysconfdir}}
-
+install -d $RPM_BUILD_ROOT{%{_sbindir},%{_mandir}/man8,%{_sysconfdir}/rc.d/init.d}
 install swapd $RPM_BUILD_ROOT%{_sbindir}
 gzip -dc swapd.8.gz | sed -e "s@/usr/local/etc@%{_sysconfdir}@" > \
 	$RPM_BUILD_ROOT%{_mandir}/man8/swapd.8
 install swapd.conf $RPM_BUILD_ROOT%{_sysconfdir}
+install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/swapd
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -64,3 +65,14 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_sbindir}/*
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/swapd.conf
 %{_mandir}/man8/*
+%attr(750,root,root) /etc/rc.d/init.d/%{name}
+
+%post
+/sbin/chkconfig --add %{name}
+/bin/mkdir -p -m700 `cat %{_sysconfdir}/swapd.conf \
+						| /bin/awk '/swapdir/ {print $2}'` || exit 1
+/etc/rc.d/init.d/%{name} start
+
+%preun
+/etc/rc.d/init.d/%{name} stop
+/sbin/chkconfig --del %{name}
