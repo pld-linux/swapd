@@ -3,12 +3,15 @@ Summary:	Dynamic swapping manager for Linux
 Summary(pl):	Program zarz±dzaj±cy dynamicznym swapowaniem dla Linuksa
 Name:		swapd
 Version:	0.2
-Release:	1
+Release:	2
 License:	GPL v2+
 Group:		Daemons
 Source0:	ftp://ftp.linux.hr/pub/swapd/%{name}-%{version}.tar.gz
 # Source0-md5:	5ae232ee69130426b595ba90c81eca4e
 URL:		http://cvs.linux.hr/swapd/
+Patch0:		%{name}-gcc33.patch
+Patch1:		%{name}-confdir.patch
+BuildRequires:	autoconf
 #PreReq:		rc-scripts
 #Requires(post,preun):	/sbin/chkconfig
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -32,6 +35,8 @@ wirtualnej.
 
 %prep
 %setup -q
+%patch0 -p1
+%patch1 -p1
 
 %build
 %{__autoconf}
