@@ -11,6 +11,9 @@ Source1:	%{name}.init
 URL:		http://cvs.linux.hr/swapd/
 Patch0:		%{name}-gcc33.patch
 Patch1:		%{name}-confdir.patch
+Patch2:		%{name}-config.patch
+Patch3:		%{name}-man.patch
+
 BuildRequires:	autoconf
 PreReq:		rc-scripts
 Requires(post,preun):	/sbin/chkconfig
@@ -39,6 +42,9 @@ wirtualnej.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
+gunzip %{_builddir}/%{name}-%{version}/%{name}.8.gz
+%patch3 -p1
 
 %build
 %{__autoconf}
@@ -53,12 +59,9 @@ rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_sbindir},%{_mandir}/man8,%{_sysconfdir}/%{name}}
 install -d $RPM_BUILD_ROOT{%{_sysconfdir}/rc.d/init.d,%{_swapfilesdir}}
 
-install swapd $RPM_BUILD_ROOT%{_sbindir}
-gzip -dc swapd.8.gz | sed -e "s@/usr/local/etc@%{_sysconfdir}@" > \
-	$RPM_BUILD_ROOT%{_mandir}/man8/%{name}.8
-cat %{name}.conf \
-	|sed -e "s@^swapdir[ tab]\+/swap@swapdir %{_swapfilesdir}@">%{name}.conf2
-install %{name}.conf2 $RPM_BUILD_ROOT%{_sysconfdir}/%{name}.conf
+install %{name} $RPM_BUILD_ROOT%{_sbindir}
+install %{name}.8 $RPM_BUILD_ROOT%{_mandir}/man8/
+install %{name}.conf $RPM_BUILD_ROOT%{_sysconfdir}/
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
 
 %clean
@@ -66,7 +69,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 /sbin/chkconfig --add %{name}
-if [ -f /var/lock/subsys/swapd ]; then
+if [ -f /var/lock/subsys/%{name} ]; then
 	/etc/rc.d/init.d/%{name} restart 1>&2
 else
 	echo "Run \"/etc/rc.d/init.d/%{name} start\" to start swap daemon."
@@ -74,7 +77,7 @@ fi
 
 %preun
 if [ "$1" = "0" ]; then
-	if [ -f /var/lock/subsys/swapd ]; then
+	if [ -f /var/lock/subsys/%{name} ]; then
 		/etc/rc.d/init.d/%{name} stop 1>&2
 	fi
 	/sbin/chkconfig --del %{name}
