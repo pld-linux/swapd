@@ -16,6 +16,16 @@
 . /etc/rc.d/init.d/functions
 
 RETVAL=0
+
+SWAPDIR=`cat /etc/swapd.conf | awk '/^swapdir +\/.*/ {print $2}'`
+# Above: swapd's config parser doesn't seem more sophisticated.
+if ! [ -d $SWAPDIR ]; then
+	mkdir -m700 $SWAPDIR
+	if [ $? -ne 0 ]; then
+        	fail; exit 1
+	fi
+fi
+
 # See how we were called.
 case "$1" in
   start)
@@ -25,7 +35,7 @@ case "$1" in
 		msg_starting swapd
 		busy
 		#daemon /usr/sbin/swapd - seems that swapd die with this.
-		/usr/sbin/swapd > /dev/null 2>&1 # deamons should be quiet?
+		swapd > /dev/null 2>&1 # be quiet!
 		RETVAL=$?
 		if [ $RETVAL -eq 0 ]; then
 			touch /var/lock/subsys/swapd
@@ -45,12 +55,11 @@ case "$1" in
 		killproc swapd
 		RETVAL=$?
 		if [ $RETVAL -eq 0 ]; then
-			SWAPDIR=`cat /etc/swapd.conf \
-				| awk '/swapdir/ {print	$2}'`
-			for SWAPFILE in $SWAPDIR/linux[0-9]*.swp ; do
-				file $SWAPFILE \
-				    | grep "Linux.* swap file" > /dev/null \
-					&& rm -f $SWAPFILE
+			# Be paranoid careful.
+			SWAPFILES=$SWAPDIR/linux[0-9]*.swp
+			for SWAPFILE in $SWAPFILES; do
+				file $SWAPFILE | grep "Linux.* swap file" \
+					> /dev/null 2>&1 && rm $SWAPFILE
 			done
 		fi
 		rm -f /var/lock/subsys/swapd
@@ -76,4 +85,4 @@ esac
 exit $RETVAL
 
 # This must be last line !
-# vi:syntax=sh:tw=78:ts=8:sw=4
+# vi:syntax=sh:tw=78:ts=8:sw=8
