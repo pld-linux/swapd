@@ -1,0 +1,2 @@
+- now swap files default are created in /var/lib/swapd
+- (pointed by Pawel Golaszewski).
