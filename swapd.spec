@@ -1,20 +1,14 @@
-# TODO
-# update to 0.4 from http://www.rkeene.org/oss/swapd/
 Summary:	Dynamic swapping manager for Linux
 Summary(pl):	Program zarz±dzaj±cy dynamicznym swapowaniem dla Linuksa
 Name:		swapd
-Version:	0.2
-Release:	7
-License:	GPL v2+
+Version:	1.0.1
+Release:	0.1
+License:	GPL
 Group:		Daemons
-Source0:	ftp://ftp.linux.hr/pub/swapd/%{name}-%{version}.tar.gz
-# Source0-md5:	5ae232ee69130426b595ba90c81eca4e
+Source0:	http://www.rkeene.org/files/oss/swapd/source/swapd-1.0.1.tar.gz
+# Source0-md5:	b53414b5317706ebc7b3b514342c6c43
 Source1:	%{name}.init
-Patch0:		%{name}-gcc33.patch
-Patch1:		%{name}-confdir.patch
-Patch2:		%{name}-config.patch
-Patch3:		%{name}-man.patch
-URL:		http://cvs.linux.hr/swapd/
+URL:		http://www.rkeene.org/oss/swapd/
 BuildRequires:	autoconf
 PreReq:		rc-scripts
 Requires(post,preun):	/sbin/chkconfig
@@ -41,11 +35,6 @@ partycji swap, poniewa¿:
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
-gunzip %{_builddir}/%{name}-%{version}/%{name}.8.gz
-%patch3 -p1
 
 %build
 %{__autoconf}
@@ -84,8 +73,7 @@ fi
 
 %files
 %defattr(644,root,root,755)
-# INSTALL may be useful (contains configuration instructions)
-%doc CHANGELOG INSTALL README
+%doc LICENSE README
 %attr(755,root,root) %{_sbindir}/*
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/%{name}.conf
 %attr(754,root,root) /etc/rc.d/init.d/%{name}
