@@ -2,7 +2,7 @@ Summary:	Dynamic swapping manager for Linux
 Summary(pl):	Program zarz±dzaj±cy dynamicznym swapowaniem dla Linuksa
 Name:		swapd
 Version:	0.2
-Release:	4
+Release:	5
 License:	GPL v2+
 Group:		Daemons
 Source0:	ftp://ftp.linux.hr/pub/swapd/%{name}-%{version}.tar.gz
