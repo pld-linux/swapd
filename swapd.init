@@ -19,10 +19,11 @@ RETVAL=0
 
 SWAPDIR=`cat /etc/swapd.conf | awk '/^swapdir +\/.*/ {print $2}'`
 # Above: swapd's config parser doesn't seem more sophisticated.
-if ! [ -d $SWAPDIR ]; then
-	mkdir -m700 $SWAPDIR
-	if [ $? -ne 0 ]; then
-        	fail; exit 1
+if ! [ -d "$SWAPDIR" ]; then
+	mkdir -m700 "$SWAPDIR"
+	RETVAL=$?
+	if [ "$RETVAL" != "0" ]; then
+        	fail; exit $RETVAL
 	fi
 fi
 
@@ -37,7 +38,7 @@ case "$1" in
 		#daemon /usr/sbin/swapd - seems that swapd die with this.
 		swapd > /dev/null 2>&1 # be quiet!
 		RETVAL=$?
-		if [ $RETVAL -eq 0 ]; then
+		if [ "$RETVAL" = "0" ]; then
 			touch /var/lock/subsys/swapd
 			ok
 		else
@@ -54,13 +55,21 @@ case "$1" in
 		msg_stopping swapd
 		killproc swapd
 		RETVAL=$?
-		if [ $RETVAL -eq 0 ]; then
+		if [ "$RETVAL" = "0" ]; then
 			# Be paranoid careful.
-			SWAPFILES=$SWAPDIR/linux[0-9]*.swp
-			for SWAPFILE in $SWAPFILES; do
-				file $SWAPFILE | grep "Linux.* swap file" \
-					> /dev/null 2>&1 && rm $SWAPFILE
-			done
+			SWAPFILES=`echo $SWAPDIR/linux[0-9]*.swp`
+			if [ "$SWAPFILES" != "$SWAPDIR/linux[0-9]*.swp" ]
+			then
+				for SWAPFILE in $SWAPFILES; do
+					file "$SWAPFILE" |\
+						grep "Linux.* swap file" \
+							> /dev/null 2>&1 
+					if [ $? -eq 0 ]; then
+						swapoff "$SWAPFILE" && \
+							rm -f "$SWAPFILE"
+					fi
+				done
+			fi
 		fi
 		rm -f /var/lock/subsys/swapd
 	else
