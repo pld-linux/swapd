@@ -1,0 +1,2 @@
+- removed TODO: now swap files are located in /tmp .
+- removed redundant Requires: /bin/awk (rc-scripts contains it).
