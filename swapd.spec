@@ -8,7 +8,6 @@ Group:		Daemons
 Source0:	http://www.rkeene.org/files/oss/swapd/source/%{name}-%{version}.tar.gz
 # Source0-md5:	cb9ec64a5abd4535b95ec59311114ade
 Source1:	%{name}.init
-Patch0:		swapd-gcc33.patch
 URL:		http://www.rkeene.org/oss/swapd/
 BuildRequires:	autoconf
 PreReq:		rc-scripts
@@ -36,7 +35,6 @@ partycji swap, poniewa¿:
 
 %prep
 %setup -q
-%patch0 -p1 
 
 %build
 %{__autoconf}
