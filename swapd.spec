@@ -1,3 +1,6 @@
+# TODO:	patching /etc/swapd.conf regarding:
+#		- more reasonable values,
+#		- FHS compatibility - config & spec violate FHS completely.
 Summary:	Dynamic swapping manager for Linux
 Summary(pl):	Program zarz±dzaj±cy dynamicznym swapowaniem dla Linuksa
 Name:		swapd
@@ -53,7 +56,7 @@ install swapd $RPM_BUILD_ROOT%{_sbindir}
 gzip -dc swapd.8.gz | sed -e "s@/usr/local/etc@%{_sysconfdir}@" > \
 	$RPM_BUILD_ROOT%{_mandir}/man8/swapd.8
 install swapd.conf $RPM_BUILD_ROOT%{_sysconfdir}
-install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/swapd
+install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
