@@ -45,11 +45,11 @@ partycji swap, poniewa¿:
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_sbindir},%{_mandir}/man8,%{_sysconfdir}/%{name}} \
-	$RPM_BUILD_ROOT{%{_sysconfdir}/rc.d/init.d,%{_swapfilesdir}}
+	$RPM_BUILD_ROOT{/etc/rc.d/init.d,%{_swapfilesdir}}
 
 install %{name} $RPM_BUILD_ROOT%{_sbindir}
-install %{name}.8 $RPM_BUILD_ROOT%{_mandir}/man8/
-install %{name}.conf $RPM_BUILD_ROOT%{_sysconfdir}/
+install %{name}.8 $RPM_BUILD_ROOT%{_mandir}/man8
+install %{name}.conf $RPM_BUILD_ROOT%{_sysconfdir}
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
 
 %clean
