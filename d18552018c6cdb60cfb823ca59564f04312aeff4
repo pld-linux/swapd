@@ -1,0 +1,2 @@
+- added patches for manpage and configuration file instead patching
+- them by sed in spec file directly (pointed by Pawel Golaszewski).
