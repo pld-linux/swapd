@@ -7,6 +7,7 @@ Release:	1
 License:	GPL v2+
 Group:		Daemons
 Source0:	ftp://ftp.linux.hr/pub/swapd/%{name}-%{version}.tar.gz
+# Source0-md5:	5ae232ee69130426b595ba90c81eca4e
 URL:		http://cvs.linux.hr/swapd/
 #PreReq:		rc-scripts
 #Requires(post,preun):	/sbin/chkconfig
