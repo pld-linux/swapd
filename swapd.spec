@@ -1,12 +1,12 @@
 Summary:	Dynamic swapping manager for Linux
 Summary(pl):	Program zarz±dzaj±cy dynamicznym swapowaniem dla Linuksa
 Name:		swapd
-Version:	1.0.2
-Release:	1
+Version:	1.0.3
+Release:	0.1
 License:	GPL
 Group:		Daemons
 Source0:	http://www.rkeene.org/files/oss/swapd/source/%{name}-%{version}.tar.gz
-# Source0-md5:	c4a3556e5da9ac0bafb5b1ed64f9afd2
+# Source0-md5:	cb9ec64a5abd4535b95ec59311114ade
 Source1:	%{name}.init
 URL:		http://www.rkeene.org/oss/swapd/
 BuildRequires:	autoconf
