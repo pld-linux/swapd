@@ -5,7 +5,7 @@ Version:	1.0.1
 Release:	0.1
 License:	GPL
 Group:		Daemons
-Source0:	http://www.rkeene.org/files/oss/swapd/source/swapd-1.0.1.tar.gz
+Source0:	http://www.rkeene.org/files/oss/swapd/source/%{name}-%{version}.tar.gz
 # Source0-md5:	b53414b5317706ebc7b3b514342c6c43
 Source1:	%{name}.init
 URL:		http://www.rkeene.org/oss/swapd/
