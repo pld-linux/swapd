@@ -47,7 +47,8 @@ wirtualnej.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_sbindir},%{_mandir}/man8,%{_sysconfdir}/rc.d/init.d}
+install -d $RPM_BUILD_ROOT{%{_sbindir},%{_mandir}/man8,/etc/rc.d/init.d}
+
 install swapd $RPM_BUILD_ROOT%{_sbindir}
 gzip -dc swapd.8.gz | sed -e "s@/usr/local/etc@%{_sysconfdir}@" > \
 	$RPM_BUILD_ROOT%{_mandir}/man8/%{name}.8
@@ -58,6 +59,22 @@ install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%post
+/sbin/chkconfig --add %{name}
+if [ -f /var/lock/subsys/swapd ]; then
+	/etc/rc.d/init.d/%{name} restart 1>&2
+else
+	echo "Run \"/etc/rc.d/init.d/%{name} start\" to start swap daemon."
+fi
+
+%preun
+if [ "$1" = "0" ]; then
+	if [ -f /var/lock/subsys/swapd ]; then
+		/etc/rc.d/init.d/%{name} stop 1>&2
+	fi
+	/sbin/chkconfig --del %{name}
+fi
+
 %files
 %defattr(644,root,root,755)
 # INSTALL may be useful (contains configuration instructions)
@@ -66,11 +83,3 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/%{name}.conf
 %{_mandir}/man8/*
 %attr(754,root,root) /etc/rc.d/init.d/%{name}
-
-%post
-/sbin/chkconfig --add %{name}
-/etc/rc.d/init.d/%{name} start
-
-%preun
-/etc/rc.d/init.d/%{name} stop
-/sbin/chkconfig --del %{name}
