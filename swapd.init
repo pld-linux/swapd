@@ -23,7 +23,8 @@ if ! [ -d "$SWAPDIR" ]; then
 	mkdir -m700 "$SWAPDIR"
 	RETVAL=$?
 	if [ "$RETVAL" != "0" ]; then
-        	fail; exit $RETVAL
+		fail
+		exit $RETVAL
 	fi
 fi
 
