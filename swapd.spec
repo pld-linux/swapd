@@ -68,7 +68,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_sbindir}/*
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/swapd.conf
 %{_mandir}/man8/*
-%attr(750,root,root) /etc/rc.d/init.d/%{name}
+%attr(754,root,root) /etc/rc.d/init.d/%{name}
 
 %post
 /sbin/chkconfig --add %{name}
