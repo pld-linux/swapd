@@ -16,6 +16,8 @@ PreReq:		rc-scripts
 Requires(post,preun):	/sbin/chkconfig
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
+%define _swapfilesdir   %{_localstatedir}/lib/%{name}
+
 %description
 swapd is a dynamic swapping manager for Linux. It provides the system
 with as much swap space (virtual memory) as is required at a
@@ -47,12 +49,15 @@ wirtualnej.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_sbindir},%{_mandir}/man8,/etc/rc.d/init.d}
+
+install -d $RPM_BUILD_ROOT{%{_sbindir},%{_mandir}/man8,%{_sysconfdir}/%{name}}
+install -d $RPM_BUILD_ROOT{%{_sysconfdir}/rc.d/init.d,%{_swapfilesdir}}
 
 install swapd $RPM_BUILD_ROOT%{_sbindir}
 gzip -dc swapd.8.gz | sed -e "s@/usr/local/etc@%{_sysconfdir}@" > \
 	$RPM_BUILD_ROOT%{_mandir}/man8/%{name}.8
-cat %{name}.conf|sed -e "s@^swapdir[ tab]\+/swap@swapdir /tmp@">%{name}.conf2
+cat %{name}.conf \
+	|sed -e "s@^swapdir[ tab]\+/swap@swapdir %{_swapfilesdir}@">%{name}.conf2
 install %{name}.conf2 $RPM_BUILD_ROOT%{_sysconfdir}/%{name}.conf
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
 
@@ -83,3 +88,4 @@ fi
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/%{name}.conf
 %{_mandir}/man8/*
 %attr(754,root,root) /etc/rc.d/init.d/%{name}
+%attr(755,root,root) %dir %{_swapfilesdir}
