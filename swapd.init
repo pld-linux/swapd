@@ -1,0 +1,79 @@
+#!/bin/sh
+#
+# swapd		swapd Dynamic swapping manager for Linux.
+#
+# chkconfig:    2345 05 95
+#
+# description:	swapd is a dynamic swapping manager for Linux. It provides the system
+#		with as much swap space (virtual memory) as is required at a
+#		particular time by dynamically creating swap files. This is more
+#		convinient than using fixed swap files and/or partitions because they
+#		(a) are unused most of the time and are just taking up disk space; and
+#		(b) provide a limited amount of virtual memory. 	
+
+
+# Source function library
+. /etc/rc.d/init.d/functions
+
+# See how we were called.
+case "$1" in
+  start)
+	# Check if the service is already running?
+	if [ ! -f /var/lock/subsys/swapd ]; then
+		# show "Starting %s service" swapd
+		msg_starting swapd
+		busy
+		#daemon /usr/sbin/swapd - seems that swapd die with this.
+		/usr/sbin/swapd > /dev/null 2>&1 # deamons should be quiet?
+		RETVAL=$?
+		if [ $RETVAL -eq 0 ];then
+			touch /var/lock/subsys/swapd
+			ok
+		fi
+	else
+		# show "%s service is already running." swapd
+		msg_already_running swapd
+		exit 1
+	fi
+        ;;
+  stop)
+        # show "Stopping %s service" swapd
+	if [ -f /var/lock/subsys/swapd ]; then
+		msg_stopping swapd
+		killproc swapd
+		RETVAL=$?
+		if [ $RETVAL -eq 0 ];then
+			rm -f /var/lock/subsys/swapd
+			SWAPDIR=`cat /etc/swapd.conf \
+				| awk '/swapdir/ {print	$2}'`
+			for SWAPFILE in $SWAPDIR/linux[0-9]*.swp
+			do
+			    file $SWAPFILE \
+				    | grep "Linux.* swap file" > /dev/null \
+				    	&& rm -f $SWAPFILE
+			done
+		fi
+	else
+		# show "%s service is not running." swapd
+		msg_not_running swapd
+		exit 1
+	fi	
+        ;;
+  restart)
+        $0 stop
+	$0 start
+        ;;
+  status)
+	status swapd
+	RETVAL=$?
+        ;;
+  *)
+	msg_usage "$0 {start|stop|status|restart}"
+        exit 1
+esac
+
+exit $RETVAL
+
+# $Log$
+# This must be last line !
+# vi:syntax=sh:tw=78:ts=8:sw=4
