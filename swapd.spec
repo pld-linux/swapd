@@ -1,6 +1,3 @@
-# TODO:	patching /etc/swapd.conf regarding:
-#		- more reasonable values,
-#		- FHS compatibility - config & spec violate FHS completely.
 Summary:	Dynamic swapping manager for Linux
 Summary(pl):	Program zarz±dzaj±cy dynamicznym swapowaniem dla Linuksa
 Name:		swapd
@@ -16,7 +13,6 @@ Patch0:		%{name}-gcc33.patch
 Patch1:		%{name}-confdir.patch
 BuildRequires:	autoconf
 PreReq:		rc-scripts
-Requires:	/bin/awk
 Requires(post,preun):	/sbin/chkconfig
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -54,8 +50,9 @@ rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_sbindir},%{_mandir}/man8,%{_sysconfdir}/rc.d/init.d}
 install swapd $RPM_BUILD_ROOT%{_sbindir}
 gzip -dc swapd.8.gz | sed -e "s@/usr/local/etc@%{_sysconfdir}@" > \
-	$RPM_BUILD_ROOT%{_mandir}/man8/swapd.8
-install swapd.conf $RPM_BUILD_ROOT%{_sysconfdir}
+	$RPM_BUILD_ROOT%{_mandir}/man8/%{name}.8
+cat %{name}.conf|sed -e "s@^swapdir[ tab]\+/swap@swapdir /tmp@">%{name}.conf2
+install %{name}.conf2 $RPM_BUILD_ROOT%{_sysconfdir}/%{name}.conf
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
 
 %clean
@@ -66,14 +63,12 @@ rm -rf $RPM_BUILD_ROOT
 # INSTALL may be useful (contains configuration instructions)
 %doc CHANGELOG INSTALL README
 %attr(755,root,root) %{_sbindir}/*
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/swapd.conf
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/%{name}.conf
 %{_mandir}/man8/*
 %attr(754,root,root) /etc/rc.d/init.d/%{name}
 
 %post
 /sbin/chkconfig --add %{name}
-/bin/mkdir -p -m700 `cat %{_sysconfdir}/swapd.conf \
-						| /bin/awk '/swapdir/ {print $2}'` || exit 1
 /etc/rc.d/init.d/%{name} start
 
 %preun
