@@ -34,7 +34,6 @@ case "$1" in
   start)
 	# Check if the service is already running?
 	if [ ! -f /var/lock/subsys/swapd ]; then
-		# show "Starting %s service" swapd
 		msg_starting swapd
 		busy
 		#daemon /usr/sbin/swapd - seems that swapd die with this.
@@ -47,13 +46,11 @@ case "$1" in
 			fail
 		fi
 	else
-		# show "%s service is already running." swapd
 		msg_already_running swapd
 	fi
 	;;
   stop)
 	if [ -f /var/lock/subsys/swapd ]; then
-	# show "Stopping %s service" swapd
 		msg_stopping swapd
 		killproc swapd
 		RETVAL=$?
@@ -78,7 +75,6 @@ case "$1" in
 		rm -f /var/lock/subsys/swapd
 		ok
 	else
-		# show "%s service is not running." swapd
 		msg_not_running swapd
 	fi	
 	;;
