@@ -10,8 +10,8 @@ Source0:	http://www.rkeene.org/files/oss/swapd/source/%{name}-%{version}.tar.gz
 Source1:	%{name}.init
 URL:		http://www.rkeene.org/oss/swapd/
 BuildRequires:	autoconf
-PreReq:		rc-scripts
 Requires(post,preun):	/sbin/chkconfig
+Requires:	rc-scripts
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define	_swapfilesdir	%{_localstatedir}/lib/%{name}
@@ -75,7 +75,7 @@ fi
 %defattr(644,root,root,755)
 %doc LICENSE README
 %attr(755,root,root) %{_sbindir}/*
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/%{name}.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/%{name}.conf
 %attr(754,root,root) /etc/rc.d/init.d/%{name}
 %attr(755,root,root) %dir %{_swapfilesdir}
 %{_mandir}/man8/*
