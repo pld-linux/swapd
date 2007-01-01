@@ -1,0 +1,98 @@
+--- swapd-0.2.orig/meminfo.c
++++ swapd-0.2/meminfo.c
+@@ -1,4 +1,7 @@
+ /* meminfo.c, copyright Neven Lovric <nlovric@linux.hr> */
++/* Integrated patches from Nick Holloway <Nick.Holloway@alfie.demon.co.uk>
++   by Aigars Mahinovs <aigarius@debian.org> 
++*/
+ 
+ #include <stdio.h>
+ #include <sys/types.h>
+@@ -11,6 +14,7 @@
+ #include <sys/mman.h>
+ #include "meminfo.h"
+ 
++/* Old version (bad for 2.5 kernels
+ unsigned long freemem(int fd)
+ {
+    unsigned long mem, swap;
+@@ -20,7 +24,78 @@
+       return(UINT_MAX);
+    if (read(fd, buf, 1024) == -1)
+       return(UINT_MAX);
++      
++   
++
+    if (sscanf(buf, "%*s%*s%*s%*s%*s%*s%*s%*s%*s%lu%*s%*s%*s%*s%*s%*s%lu", &mem, &swap) != 2)
+       return(UINT_MAX);
+    return(mem + swap);
+ }
++*/
++
++unsigned long freemem(int fd)
++{
++/*    static  int     fd	= -1;*/		/* fd to read meminfo from */
++    static  char    buffer [ 10240 ];	/* enough to slurp meminfo into */
++    char   *cp;
++    long    memfree, buffers, cached, swapfree;
++    int     n;
++
++    if ( fd < 0 ) {
++        fd = open ( "/proc/meminfo", O_RDONLY );
++        if ( fd < 0 ) {
++        /*syslog ( LOG_ERR, "can't open \"/proc/meminfo\": %m" );*/
++            exit ( UINT_MAX );
++    }
++    }
++
++    if ( lseek ( fd, 0, SEEK_SET ) == EOF ) {
++        /*syslog ( LOG_ERR, "lseek failed on \"/proc/meminfo\": %m" );*/
++        exit ( UINT_MAX );
++    }
++    if ( ( n = read ( fd, buffer, sizeof(buffer)-1 ) ) < 0 ) {
++    /*syslog ( LOG_ERR, "read failed on \"/proc/meminfo\": %m" );*/
++    exit ( UINT_MAX );
++    }
++    buffer[n] = '\0';				/* null terminate */
++
++    memfree = -1;
++    buffers = 0;
++    cached  = 0;
++    swapfree = 0;
++
++    cp = buffer;
++    while ( cp )
++    {
++    if ( strncmp( cp, "MemFree:", 8 ) == 0 )
++    {
++        memfree = atol( cp+9 ) * 1024;
++        /*printf( "MemFree: %ld\n", memfree );*/
++    }
++    else if ( strncmp( cp, "Buffers:", 8 ) == 0 )
++    {
++        buffers = atol( cp+9 ) * 1024;
++        /*printf( "Buffers: %ld\n", buffers );*/
++    }
++    else if ( strncmp( cp, "Cached:", 7 ) == 0 )
++    {
++        cached = atol( cp+8 ) * 1024;
++        /*printf( "Cached: %ld\n", cached );*/
++    }
++    else if ( strncmp( cp, "SwapFree:", 9 ) == 0 )
++    {
++        swapfree = atol( cp+10 ) * 1024;
++	/*printf( "SwapFree: %ld\n", swapfree );*/
++    }
++
++    /* move onto next line */
++    cp = strchr( cp, '\n' );
++    if ( cp )
++    {
++        cp++;
++    }
++    }
++
++    return ( memfree + swapfree + ( buffers + cached ) / 2 );
++}
++																																																				
+\ No newline at end of file
