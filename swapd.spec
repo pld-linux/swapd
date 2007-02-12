@@ -1,5 +1,5 @@
 Summary:	Dynamic swapping manager for Linux
-Summary(pl.UTF-8):   Program zarządzający dynamicznym swapowaniem dla Linuksa
+Summary(pl.UTF-8):	Program zarządzający dynamicznym swapowaniem dla Linuksa
 Name:		swapd
 Version:	1.0.3
 Release:	0.1
