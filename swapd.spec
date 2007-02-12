@@ -1,5 +1,5 @@
 Summary:	Dynamic swapping manager for Linux
-Summary(pl):	Program zarz±dzaj±cy dynamicznym swapowaniem dla Linuksa
+Summary(pl.UTF-8):   Program zarzÄ…dzajÄ…cy dynamicznym swapowaniem dla Linuksa
 Name:		swapd
 Version:	1.0.3
 Release:	0.1
@@ -25,14 +25,14 @@ convinient than using fixed swap files and/or partitions because they
   (a) are unused most of the time and are just taking up disk space,
   (b) provide a limited amount of virtual memory.
 
-%description -l pl
-swapd to program zarz±dzaj±cy dynamicznym swapowaniem dla Linuksa.
-Dostarcza systemowi tak± objêto¶æ swapu (pamiêci wirtualnej), jaka
-jest w danej chwili potrzebna, poprzez dynamiczne tworzenie plików
-swap. Jest to bardziej wygodne ni¿ u¿ywanie sta³ych plików i/lub
-partycji swap, poniewa¿:
-  (a) s± one nie u¿ywane przez wiêkszo¶æ czasu i tylko zajmuj± miejsce,
-  (b) daj± ograniczon± ilo¶æ pamiêci wirtualnej.
+%description -l pl.UTF-8
+swapd to program zarzÄ…dzajÄ…cy dynamicznym swapowaniem dla Linuksa.
+Dostarcza systemowi takÄ… objÄ™toÅ›Ä‡ swapu (pamiÄ™ci wirtualnej), jaka
+jest w danej chwili potrzebna, poprzez dynamiczne tworzenie plikÃ³w
+swap. Jest to bardziej wygodne niÅ¼ uÅ¼ywanie staÅ‚ych plikÃ³w i/lub
+partycji swap, poniewaÅ¼:
+  (a) sÄ… one nie uÅ¼ywane przez wiÄ™kszoÅ›Ä‡ czasu i tylko zajmujÄ… miejsce,
+  (b) dajÄ… ograniczonÄ… iloÅ›Ä‡ pamiÄ™ci wirtualnej.
 
 %prep
 %setup -q
